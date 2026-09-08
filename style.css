@@ -1,108 +1,140 @@
-```css
 * {
     box-sizing: border-box;
 }
 
+html,
 body {
     margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+
+body {
     background: #020617;
     color: white;
-    font-family: Arial, sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
     overflow: hidden;
-    height: 100vh;
 }
 
 .wrapper {
+    width: 100%;
     height: 100vh;
+    padding: 1vh 1vw;
     display: flex;
     flex-direction: column;
-    padding: 0 0.5vw;
 }
 
 
 /* =========================================================
-   NAWIGACJA MIESIĘCY
-========================================================= */
-
-#month-nav {
-    display: flex;
-    background: #0f172a;
-    padding: 3px;
-    gap: 4px;
-    border-bottom: 1px solid #1e293b;
-}
-
-.nav-btn {
-    background: #1e293b;
-    color: #94a3b8;
-    border: 1px solid #334155;
-    padding: 2px 8px;
-    font-size: 1.3vh;
-    cursor: pointer;
-    border-radius: 3px;
-}
-
-.nav-btn.active {
-    color: #00ff00;
-    border-color: #00ff00;
-    background: #064e3b;
-}
-
-
-/* =========================================================
-   HEADER
+   NAGŁÓWEK
 ========================================================= */
 
 .header {
-    height: 3.5vh;
+    width: 100%;
+    height: 7vh;
+    min-height: 55px;
+
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 0 1vw;
-    background: #0f172a;
-    border-bottom: 2px solid #1e293b;
+    justify-content: space-between;
+
+    gap: 1vw;
+    margin-bottom: 0.5vh;
 }
 
 .title {
-    font-size: 3.5vh;
-    font-weight: bold;
+    flex: 0 0 auto;
+
     color: #38bdf8;
-    min-width: 250px;
+    font-size: 3.5vh;
+    font-weight: 800;
+
+    white-space: nowrap;
 }
 
 .nav-container {
+    flex: 1 1 auto;
+
     display: flex;
-    gap: 5px;
-    flex-wrap: wrap;
     justify-content: center;
-    flex-grow: 1;
-    margin: 0 20px;
+    align-items: center;
+
+    gap: 0.25vw;
+
+    overflow: hidden;
 }
+
+.nav-container button {
+    border: none;
+    border-radius: 6px;
+
+    background: #1e293b;
+    color: white;
+
+    padding: 0.7vh 0.55vw;
+
+    font-size: 1.45vh;
+    font-weight: bold;
+
+    cursor: pointer;
+
+    white-space: nowrap;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+.nav-container button:hover {
+    transform: scale(1.05);
+}
+
+.nav-container button.active {
+    background: #38bdf8;
+    color: #020617;
+}
+
+
+/* =========================================================
+   ZEGAR
+========================================================= */
 
 .time-box {
+    flex: 0 0 auto;
+
     display: flex;
     align-items: center;
-    gap: 20px;
-    min-width: 350px;
-    justify-content: flex-end;
-}
 
-.time {
-    font-size: 4vh;
-    font-family: 'Courier New', monospace;
-    font-weight: bold;
-    color: #ffffff;
+    gap: 0.8vw;
 }
 
 .refresh-btn {
-    background: #0ea5e9;
-    color: white;
     border: none;
-    padding: 10px 15px;
     border-radius: 6px;
-    cursor: pointer;
-    font-size: 1.6vh;
+
+    background: #1e293b;
+    color: white;
+
+    padding: 0.8vh 0.8vw;
+
+    font-size: 1.4vh;
     font-weight: bold;
+
+    cursor: pointer;
+}
+
+.refresh-btn:hover {
+    background: #334155;
+}
+
+.time {
+    font-size: 2.4vh;
+    font-weight: bold;
+
+    color: #e2e8f0;
+
+    white-space: nowrap;
 }
 
 
@@ -111,80 +143,127 @@ body {
 ========================================================= */
 
 #table-container {
-    flex-grow: 1;
-    height: 88vh;
-    overflow: hidden;
+    width: 100%;
+    flex: 1 1 auto;
+
+    min-height: 0;
 }
 
 table {
     width: 100%;
     height: 100%;
+
+    table-layout: fixed;
+
     border-collapse: separate;
     border-spacing: 2px;
-    table-layout: fixed;
-    color: #ffffff;
+
+    font-size: 2vh;
 }
 
-.logo-space {
-    position: relative;
-    background: #1e293b !important;
-}
-
-.table-logo {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+tbody {
     width: 100%;
-    height: 100%;
-    object-fit: fill;
 }
 
-th {
-    background: #1e293b;
-    text-transform: uppercase;
-    padding: 2px;
+tr {
+    height: auto;
 }
 
 
 /* =========================================================
-   DNI I DATY
+   KOMÓRKI
 ========================================================= */
 
-.day {
-    font-size: 1.8vh;
-    color: #94a3b8;
-    text-align: center;
-    font-weight: bold;
-}
-
-.date {
-    font-size: 1.8vh;
-    color: #38bdf8;
-    text-align: center;
-    font-weight: bold;
-}
-
-
-/* =========================================================
-   KOMÓRKI TECHNIKÓW
-========================================================= */
-
-.tech-data {
-    text-align: center;
-    font-size: 2.4vh;
-    border: 1px solid #334155;
+td {
     position: relative;
+
+    border-radius: 5px;
+
+    text-align: center;
+    vertical-align: middle;
+
     overflow: hidden;
+}
+
+.day-name {
+    width: 6vw;
+
+    background: #0f172a;
+
+    font-size: 2vh;
+    font-weight: bold;
+
     white-space: nowrap;
 }
 
-.week-odd td {
+.date-cell {
+    width: 6vw;
+
+    background: #020617;
+
+    font-size: 2vh;
+    font-weight: bold;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   TECHNICY
+========================================================= */
+
+.tech-data {
+    position: relative;
+
+    background: #0f172a;
+
+    font-size: 2.4vh;
+    font-weight: 600;
+
+    overflow: hidden;
+    white-space: nowrap;
+
+    padding: 0;
+}
+
+
+/* kolory techników */
+
+td:nth-child(3) {
+    border-left: 4px solid #38bdf8;
+}
+
+td:nth-child(4) {
+    border-left: 4px solid #818cf8;
+}
+
+td:nth-child(5) {
+    border-left: 4px solid #fbbf24;
+}
+
+td:nth-child(6) {
+    border-left: 4px solid #f472b6;
+}
+
+
+/* =========================================================
+   TYGODNIE
+========================================================= */
+
+.week-odd .tech-data {
     background: #0f172a;
 }
 
-.week-even td {
-    background: #1e293b;
+.week-even .tech-data {
+    background: #111827;
+}
+
+.week-odd .day-name {
+    background: #0b1220;
+}
+
+.week-even .day-name {
+    background: #111827;
 }
 
 
@@ -192,79 +271,21 @@ th {
    DZISIAJ
 ========================================================= */
 
-.today-row td {
-    background-color: rgba(0, 150, 0, 0.25) !important;
-    border-top: 3px solid #00ff00 !important;
-    border-bottom: 3px solid #00ff00 !important;
-    box-shadow: inset 0 0 15px rgba(0, 255, 0, 0.2);
+.today-row .tech-data {
+    background: #123524;
+
+    box-shadow:
+        inset 0 0 0 2px #22c55e;
 }
 
+.today-row .day-name,
+.today-row .date-cell {
+    background: #14532d;
 
-/* =========================================================
-   TEKST
-========================================================= */
+    color: #ffffff;
 
-.tech-data span {
-    color: inherit;
-}
-
-.neon-blue-text {
-    color: #00d2ff !important;
-    text-shadow:
-        0 0 8px #0044ff,
-        0 0 15px #0044ff !important;
-    font-weight: bold !important;
-}
-
-
-/* =========================================================
-   ALARM 8-16
-========================================================= */
-
-@keyframes alarm-red {
-
-    0% {
-        background-color: #450a0a;
-        box-shadow:
-            inset 0 0 10px #ff0000;
-    }
-
-    100% {
-        background-color: #ff0000;
-        box-shadow:
-            inset 0 0 60px 20px #450a0a;
-    }
-}
-
-.alarm-pulse {
-    animation:
-        alarm-red 0.5s infinite alternate !important;
-}
-
-.alarm-pulse span {
-    text-shadow:
-        0 0 5px #000000;
-}
-
-
-/* =========================================================
-   KOLORY TECHNIKÓW
-========================================================= */
-
-td:nth-child(3) {
-    border-left: 10px solid #38bdf8;
-}
-
-td:nth-child(4) {
-    border-left: 10px solid #818cf8;
-}
-
-td:nth-child(5) {
-    border-left: 10px solid #fbbf24;
-}
-
-td:nth-child(6) {
-    border-left: 10px solid #f472b6;
+    box-shadow:
+        inset 0 0 0 2px #22c55e;
 }
 
 
@@ -272,8 +293,16 @@ td:nth-child(6) {
    MARQUEE
 ========================================================= */
 
+/*
+ * UWAGA:
+ * Pole tekstowe jest celowo węższe od całej komórki.
+ *
+ * Dzięki temu prawa część komórki pozostaje
+ * zarezerwowana dla lampki.
+ */
+
 .marquee-box {
-    width: 100%;
+    width: calc(100% - 42px);
     height: 100%;
 
     display: flex;
@@ -281,35 +310,21 @@ td:nth-child(6) {
 
     overflow: hidden;
 
-    /*
-       Rezerwujemy większą strefę po prawej stronie.
-       Tekst nie dochodzi do lampki.
-    */
-    padding: 0 45px 0 0;
+    padding: 0;
 
-    /*
-       Tekst delikatnie zanika przed lampką.
-       Dzięki temu nie tworzy się wizualny bałagan.
-    */
-    -webkit-mask-image: linear-gradient(
-        to right,
-        #000 0%,
-        #000 82%,
-        transparent 94%
-    );
+    position: relative;
 
-    mask-image: linear-gradient(
-        to right,
-        #000 0%,
-        #000 82%,
-        transparent 94%
-    );
+    z-index: 1;
 }
 
 .marquee-box span {
     display: inline-block;
+
     white-space: nowrap;
-    padding: 0 10px;
+
+    padding: 0 8px;
+
+    will-change: transform;
 }
 
 .animate-scroll {
@@ -326,22 +341,18 @@ td:nth-child(6) {
 
     85%,
     100% {
-        transform:
-            translateX(var(--scroll-dist));
+        transform: translateX(var(--scroll-dist));
     }
 }
 
 
 /* =========================================================
-   LAMPKA
+   LAMPKI
 ========================================================= */
 
 .task-lamp {
     position: absolute;
 
-    /*
-       Lampka pozostaje nieruchoma względem komórki.
-    */
     right: 10px;
     top: 50%;
 
@@ -352,9 +363,6 @@ td:nth-child(6) {
 
     border-radius: 50%;
 
-    /*
-       Stan czerwony.
-    */
     background: #ff0000;
 
     border: 2px solid #7f0000;
@@ -363,29 +371,23 @@ td:nth-child(6) {
         0 0 5px #ff0000,
         0 0 10px #ff0000;
 
-    /*
-       Zapobiega przypadkowemu zoomowaniu
-       przy dwukliku na urządzeniach dotykowych.
-    */
-    touch-action: manipulation;
-
     cursor: pointer;
 
     z-index: 20;
 
+    touch-action: manipulation;
+
     transition:
         background 0.2s ease,
         box-shadow 0.2s ease,
-        border-color 0.2s ease;
+        border-color 0.2s ease,
+        transform 0.15s ease;
 }
 
 
-/* =========================================================
-   ZIELONA LAMPKA
-========================================================= */
+/* zielona lampka */
 
 .task-lamp.green {
-
     background: #00ff00;
 
     border-color: #008000;
@@ -397,15 +399,33 @@ td:nth-child(6) {
 }
 
 
-/* =========================================================
-   EFEKT NAJECHANIA
-========================================================= */
+/* delikatne powiększenie po najechaniu */
 
 .task-lamp:hover {
-
     transform:
         translateY(-50%)
-        scale(1.15);
+        scale(1.12);
+}
+
+
+/* =========================================================
+   ALARM 8-16
+========================================================= */
+
+.alarm-pulse {
+    animation:
+        alarmPulse 1s ease-in-out infinite alternate;
+}
+
+@keyframes alarmPulse {
+
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0.55;
+    }
 }
 
 
@@ -414,10 +434,92 @@ td:nth-child(6) {
 ========================================================= */
 
 .footer {
-    height: 2vh;
-    text-align: right;
-    font-size: 1.2vh;
-    color: #475569;
-    padding-right: 10px;
+    width: 100%;
+
+    height: 2.5vh;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    padding-right: 0.5vw;
+
+    color: #64748b;
+
+    font-size: 1.35vh;
 }
-```
+
+
+/* =========================================================
+   BŁĄD
+========================================================= */
+
+.error {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #f87171;
+
+    font-size: 3vh;
+    font-weight: bold;
+}
+
+
+/* =========================================================
+   TELEFON / MNIEJSZY EKRAN
+========================================================= */
+
+@media (max-width: 1000px) {
+
+    .header {
+        height: auto;
+        min-height: 50px;
+
+        flex-wrap: wrap;
+    }
+
+    .title {
+        font-size: 24px;
+    }
+
+    .nav-container {
+        order: 3;
+
+        width: 100%;
+
+        overflow-x: auto;
+        justify-content: flex-start;
+    }
+
+    .nav-container button {
+        font-size: 12px;
+        padding: 6px 8px;
+    }
+
+    .time {
+        font-size: 18px;
+    }
+
+    table {
+        font-size: 14px;
+    }
+
+    .tech-data {
+        font-size: 15px;
+    }
+
+    .task-lamp {
+        width: 14px;
+        height: 14px;
+
+        right: 7px;
+    }
+
+    .marquee-box {
+        width: calc(100% - 35px);
+    }
+}
