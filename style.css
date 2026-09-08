@@ -106,3 +106,31 @@ td:nth-child(6) { border-left: 10px solid #f472b6; }
 }
 
 .footer { height: 2vh; text-align: right; font-size: 1.2vh; color: #475569; padding-right: 10px; }
+
+/* =========================
+   LAMPKA STATUSU
+   ========================= */
+
+.status-lamp {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    white-space: nowrap;
+}
+
+.lamp {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #00ff00;
+    box-shadow:
+        0 0 5px #00ff00,
+        0 0 12px #00ff00,
+        0 0 20px rgba(0, 255, 0, 0.7);
+}
+
+.lamp-text {
+    font-size: 1.3vh;
+    font-weight: bold;
+    color: #00ff00;
+}
