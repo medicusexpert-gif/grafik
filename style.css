@@ -1,3 +1,4 @@
+```css
 * {
     box-sizing: border-box;
 }
@@ -174,15 +175,7 @@ th {
     font-size: 2.4vh;
     border: 1px solid #334155;
     position: relative;
-
-    /*
-       Bardzo ważne:
-       lampka jest niezależnym elementem
-       pozycjonowanym względem komórki.
-    */
-
     overflow: hidden;
-
     white-space: nowrap;
 }
 
@@ -289,11 +282,28 @@ td:nth-child(6) {
     overflow: hidden;
 
     /*
-       Rezerwujemy miejsce na lampkę.
-       Dzięki temu tekst nie wchodzi pod lampkę.
+       Rezerwujemy większą strefę po prawej stronie.
+       Tekst nie dochodzi do lampki.
     */
+    padding: 0 45px 0 0;
 
-    padding: 0 30px 0 0;
+    /*
+       Tekst delikatnie zanika przed lampką.
+       Dzięki temu nie tworzy się wizualny bałagan.
+    */
+    -webkit-mask-image: linear-gradient(
+        to right,
+        #000 0%,
+        #000 82%,
+        transparent 94%
+    );
+
+    mask-image: linear-gradient(
+        to right,
+        #000 0%,
+        #000 82%,
+        transparent 94%
+    );
 }
 
 .marquee-box span {
@@ -326,23 +336,13 @@ td:nth-child(6) {
    LAMPKA
 ========================================================= */
 
-/*
-   LAMPKA JEST ABSOLUTNA.
-
-   Oznacza to, że:
-   - nie jest częścią przewijanego tekstu,
-   - tekst może jechać w lewo/prawo,
-   - lampka pozostaje w tym samym miejscu komórki.
-*/
-
 .task-lamp {
     position: absolute;
 
     /*
-       Położenie lampki w komórce.
+       Lampka pozostaje nieruchoma względem komórki.
     */
-
-    right: 8px;
+    right: 10px;
     top: 50%;
 
     width: 16px;
@@ -353,9 +353,8 @@ td:nth-child(6) {
     border-radius: 50%;
 
     /*
-       Czerwony stan początkowy.
+       Stan czerwony.
     */
-
     background: #ff0000;
 
     border: 2px solid #7f0000;
@@ -365,11 +364,9 @@ td:nth-child(6) {
         0 0 10px #ff0000;
 
     /*
-       Bardzo ważne dla telefonu/tabletu.
-       Podwójne kliknięcie nie powinno powodować
-       niepotrzebnego zoomowania.
+       Zapobiega przypadkowemu zoomowaniu
+       przy dwukliku na urządzeniach dotykowych.
     */
-
     touch-action: manipulation;
 
     cursor: pointer;
@@ -401,7 +398,7 @@ td:nth-child(6) {
 
 
 /* =========================================================
-   EFEKT PO NAJECHANIU MYSZKĄ
+   EFEKT NAJECHANIA
 ========================================================= */
 
 .task-lamp:hover {
@@ -423,3 +420,4 @@ td:nth-child(6) {
     color: #475569;
     padding-right: 10px;
 }
+```
