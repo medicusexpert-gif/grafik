@@ -21,62 +21,193 @@ const monthNames = [
 
 const logoUrl = "logo.png";
 
-let currentViewMonth = String(new Date().getMonth() + 1).padStart(2, '0');
+let currentViewMonth =
+    String(new Date().getMonth() + 1).padStart(2, '0');
+
+
+/* =========================================================
+   CSV
+========================================================= */
 
 function parseCSVLine(line) {
+
     const result = [];
     let cur = "";
     let inQuote = false;
-    const sep = line.includes(';') ? ';' : ',';
+
+    const sep =
+        line.includes(';')
+            ? ';'
+            : ',';
 
     for (let i = 0; i < line.length; i++) {
-        let char = line[i];
+
+        const char = line[i];
 
         if (char === '"') {
+
             inQuote = !inQuote;
-        } else if (char === sep && !inQuote) {
+
+        } else if (
+            char === sep &&
+            !inQuote
+        ) {
+
             result.push(cur.trim());
             cur = "";
+
         } else {
+
             cur += char;
         }
     }
 
     result.push(cur.trim());
 
-    return result.map(cell => cell.replace(/^"(.*)"$/, '$1'));
+    return result.map(
+        cell =>
+            cell.replace(/^"(.*)"$/, '$1')
+    );
 }
+
+
+/* =========================================================
+   LAMPKI
+========================================================= */
+
+/*
+   Stan lampki zapisujemy w localStorage.
+
+   Klucz zawiera:
+   - miesiąc
+   - datę
+   - technika
+
+   Dzięki temu po odświeżeniu strony stan zostaje.
+*/
+
+function getLampKey(rowDate, techIndex) {
+
+    return `grafik-lamp-${currentViewMonth}-${rowDate}-${techIndex}`;
+}
+
+
+function getLampState(rowDate, techIndex) {
+
+    const key =
+        getLampKey(rowDate, techIndex);
+
+    return localStorage.getItem(key) === "green";
+}
+
+
+function setLampState(rowDate, techIndex, isGreen) {
+
+    const key =
+        getLampKey(rowDate, techIndex);
+
+    if (isGreen) {
+
+        localStorage.setItem(
+            key,
+            "green"
+        );
+
+    } else {
+
+        localStorage.removeItem(key);
+    }
+}
+
+
+/*
+   Podwójne szybkie kliknięcie lampki.
+*/
+
+function toggleLamp(lamp) {
+
+    const rowDate =
+        lamp.dataset.date;
+
+    const techIndex =
+        lamp.dataset.tech;
+
+    const currentlyGreen =
+        lamp.classList.contains("green");
+
+    const newState =
+        !currentlyGreen;
+
+    if (newState) {
+
+        lamp.classList.add("green");
+
+    } else {
+
+        lamp.classList.remove("green");
+    }
+
+    setLampState(
+        rowDate,
+        techIndex,
+        newState
+    );
+}
+
+
+/* =========================================================
+   ŁADOWANIE DANYCH
+========================================================= */
 
 async function loadData() {
 
-    const url = sheetLinks[currentViewMonth];
+    const url =
+        sheetLinks[currentViewMonth];
 
     try {
 
-        const res = await fetch(url);
-        const rawData = await res.text();
+        const res =
+            await fetch(url);
 
-        const rows = rawData
-            .split(/\r?\n/)
-            .filter(line => line.trim() !== "")
-            .map(parseCSVLine);
+        const rawData =
+            await res.text();
 
-        const now = new Date();
+        const rows =
+            rawData
+                .split(/\r?\n/)
+                .filter(
+                    line =>
+                        line.trim() !== ""
+                )
+                .map(parseCSVLine);
+
+        const now =
+            new Date();
 
         const isAlarmTime =
             (now.getHours() > 15) ||
-            (now.getHours() === 15 && now.getMinutes() >= 30);
+            (
+                now.getHours() === 15 &&
+                now.getMinutes() >= 30
+            );
 
         const todayCSV =
-            `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+            `${now.getFullYear()}-${String(
+                now.getMonth() + 1
+            ).padStart(2, '0')}-${String(
+                now.getDate()
+            ).padStart(2, '0')}`;
 
         const realMonth =
-            String(now.getMonth() + 1).padStart(2, '0');
+            String(
+                now.getMonth() + 1
+            ).padStart(2, '0');
 
         const isCurrentMonthViewed =
-            (currentViewMonth === realMonth);
+            currentViewMonth === realMonth;
 
-        let html = "<table>";
+        let html =
+            "<table>";
 
         html += `
             <colgroup>
@@ -96,8 +227,11 @@ async function loadData() {
             if (
                 i > 1 &&
                 row[0] &&
-                row[0].toLowerCase().includes("poniedziałek")
+                row[0]
+                    .toLowerCase()
+                    .includes("poniedziałek")
             ) {
+
                 weekCounter++;
             }
 
@@ -111,13 +245,22 @@ async function loadData() {
                 row[1].trim() === todayCSV;
 
             const todayRowClass =
-                isToday ? " today-row" : "";
+                isToday
+                    ? " today-row"
+                    : "";
 
-            html += `<tr class="${weekClass}${todayRowClass}">`;
+            html +=
+                `<tr class="${weekClass}${todayRowClass}">`;
+
 
             row.forEach((cell, j) => {
 
                 if (j > 5) return;
+
+
+                /* =========================================
+                   NAGŁÓWEK
+                ========================================= */
 
                 if (i === 0) {
 
@@ -155,6 +298,11 @@ async function loadData() {
                         `;
                     }
 
+
+                /* =========================================
+                   DRUGI WIERSZ NAGŁÓWKA
+                ========================================= */
+
                 } else if (i === 1) {
 
                     if (j > 1) {
@@ -170,6 +318,11 @@ async function loadData() {
                             </th>
                         `;
                     }
+
+
+                /* =========================================
+                   WIERSZE GRAFIKU
+                ========================================= */
 
                 } else {
 
@@ -193,7 +346,6 @@ async function loadData() {
                     const cellText =
                         cell.toLowerCase();
 
-                    // Sprawdzamy miesiąc na podstawie daty
                     const rowDatePart =
                         row[1]
                             ? row[1].split("-")
@@ -205,7 +357,12 @@ async function loadData() {
                             : null;
 
                     const isCellInSelectedMonth =
-                        (rowMonth === currentViewMonth);
+                        rowMonth === currentViewMonth;
+
+
+                    /* =====================================
+                       KOLOROWANIE
+                    ===================================== */
 
                     if (j > 1) {
 
@@ -216,18 +373,20 @@ async function loadData() {
 
                         } else {
 
-                            // Alarm dla dzisiejszego dnia po 15:30
                             if (
                                 cellText.includes("8-16") &&
                                 isToday &&
                                 isAlarmTime
                             ) {
+
                                 specialClass =
                                     " alarm-pulse";
                             }
 
-                            // Kolorowanie 8-16
-                            if (cellText.includes("8-16")) {
+
+                            if (
+                                cellText.includes("8-16")
+                            ) {
 
                                 content =
                                     content.replace(
@@ -247,20 +406,65 @@ async function loadData() {
 
                     } else {
 
-                        // Dzień i data
                         if (!isCellInSelectedMonth) {
+
                             inlineStyle =
                                 "color: #475569;";
                         }
                     }
 
+
+                    /* =====================================
+                       LAMPKA
+                    ===================================== */
+
+                    let lampHTML = "";
+
+                    /*
+                       Lampkę pokazujemy tylko przy zadaniu.
+                       Nie pojawi się przy pustej komórce.
+                    */
+
+                    if (
+                        j > 1 &&
+                        cell.trim() !== ""
+                    ) {
+
+                        const isGreen =
+                            getLampState(
+                                row[1],
+                                j
+                            );
+
+                        lampHTML = `
+                            <span
+                                class="task-lamp ${isGreen ? 'green' : ''}"
+                                data-date="${row[1]}"
+                                data-tech="${j}"
+                                ondblclick="toggleLamp(this)"
+                                title="Kliknij dwa razy">
+                            </span>
+                        `;
+                    }
+
+
+                    /* =====================================
+                       KOMÓRKA
+                    ===================================== */
+
                     html += `
                         <td class="${className}${specialClass}">
+
+                            ${lampHTML}
+
                             <div class="marquee-box">
+
                                 <span style="${inlineStyle}">
                                     ${content}
                                 </span>
+
                             </div>
+
                         </td>
                     `;
                 }
@@ -272,10 +476,24 @@ async function loadData() {
 
         html += "</table>";
 
-        document.getElementById("table-container").innerHTML = html;
+
+        /* =============================================
+           WSTAWIENIE TABELI
+        ============================================= */
+
+        document.getElementById(
+            "table-container"
+        ).innerHTML = html;
+
+
+        /* =============================================
+           LOGO
+        ============================================= */
 
         const logoCont =
-            document.getElementById("main-logo-container");
+            document.getElementById(
+                "main-logo-container"
+            );
 
         if (logoCont) {
 
@@ -287,35 +505,76 @@ async function loadData() {
             `;
         }
 
-        document.getElementById("update-time").innerText =
+
+        /* =============================================
+           CZAS AKTUALIZACJI
+        ============================================= */
+
+        document.getElementById(
+            "update-time"
+        ).innerText =
             new Date().toLocaleTimeString();
+
+
+        /* =============================================
+           WEEKENDY
+        ============================================= */
 
         hideWeekends();
 
-        setTimeout(initSmartMarquee, 200);
+
+        /* =============================================
+           MARQUEE
+        ============================================= */
+
+        setTimeout(
+            initSmartMarquee,
+            200
+        );
+
 
     } catch (err) {
 
-        console.error("Błąd CSV:", err);
+        console.error(
+            "Błąd CSV:",
+            err
+        );
 
-        setTimeout(loadData, 10000);
+        setTimeout(
+            loadData,
+            10000
+        );
     }
 }
+
+
+/* =========================================================
+   MARQUEE
+========================================================= */
 
 function initSmartMarquee() {
 
     const spans =
-        document.querySelectorAll('.tech-data span');
+        document.querySelectorAll(
+            '.tech-data .marquee-box span'
+        );
 
     spans.forEach(span => {
 
-        const box = span.parentElement;
+        const box =
+            span.parentElement;
 
-        span.classList.remove('animate-scroll');
+        span.classList.remove(
+            'animate-scroll'
+        );
 
-        if (span.offsetWidth > box.offsetWidth) {
+        if (
+            span.offsetWidth >
+            box.offsetWidth
+        ) {
 
-            box.style.justifyContent = "flex-start";
+            box.style.justifyContent =
+                "flex-start";
 
             const distance =
                 span.offsetWidth -
@@ -327,18 +586,27 @@ function initSmartMarquee() {
                 `-${distance}px`
             );
 
-            span.classList.add('animate-scroll');
+            span.classList.add(
+                'animate-scroll'
+            );
 
         } else {
 
-            box.style.justifyContent = "center";
+            box.style.justifyContent =
+                "center";
         }
     });
 }
 
+
+/* =========================================================
+   SKRÓCONE DNI
+========================================================= */
+
 function shortenDay(day) {
 
     const days = {
+
         "poniedziałek": "Pon",
         "wtorek": "Wt",
         "środa": "Śr",
@@ -348,24 +616,42 @@ function shortenDay(day) {
         "niedziela": "Nd"
     };
 
-    return days[day.toLowerCase()] || day;
+    return (
+        days[
+            day.toLowerCase()
+        ] ||
+        day
+    );
 }
+
+
+/* =========================================================
+   SKRÓCONA DATA
+========================================================= */
 
 function shortenDate(dateStr) {
 
-    const parts = dateStr.split("-");
+    const parts =
+        dateStr.split("-");
 
     return parts.length === 3
         ? `${parts[2]}.${parts[1]}`
         : dateStr;
 }
 
+
+/* =========================================================
+   UKRYWANIE WEEKENDÓW
+========================================================= */
+
 function hideWeekends() {
 
     const rows =
-        document.querySelectorAll("table tr");
+        document.querySelectorAll(
+            "table tr"
+        );
 
-    rows.forEach((row) => {
+    rows.forEach(row => {
 
         const dayCell =
             row.querySelector(".day");
@@ -377,16 +663,27 @@ function hideWeekends() {
                 dayCell.innerText === "Nd"
             )
         ) {
-            row.style.display = "none";
+
+            row.style.display =
+                "none";
         }
     });
 }
+
+
+/* =========================================================
+   NAWIGACJA MIESIĘCY
+========================================================= */
 
 function renderNav() {
 
     let navHtml = "";
 
-    for (let i = 1; i <= 12; i++) {
+    for (
+        let i = 1;
+        i <= 12;
+        i++
+    ) {
 
         const m =
             String(i).padStart(2, '0');
@@ -400,49 +697,83 @@ function renderNav() {
         `;
     }
 
-    document.getElementById("month-nav").innerHTML =
+    document.getElementById(
+        "month-nav"
+    ).innerHTML =
         navHtml;
 }
 
+
 function changeMonth(m) {
 
-    currentViewMonth = m;
+    currentViewMonth =
+        m;
 
     renderNav();
 
     loadData();
 }
 
+
+/* =========================================================
+   ZEGAR
+========================================================= */
+
 function updateClock() {
 
     const clock =
-        document.getElementById("clock");
+        document.getElementById(
+            "clock"
+        );
 
-    const now = new Date();
+    const now =
+        new Date();
 
     if (clock) {
+
         clock.innerText =
-            now.toLocaleTimeString("pl-PL");
+            now.toLocaleTimeString(
+                "pl-PL"
+            );
     }
 
+
     const monthHeader =
-        document.getElementById("current-month-name");
+        document.getElementById(
+            "current-month-name"
+        );
 
     if (monthHeader) {
 
-        // ROK JEST POBIERANY AUTOMATYCZNIE Z AKTUALNEJ DATY
         monthHeader.innerText =
-            `${monthNames[parseInt(currentViewMonth) - 1].toUpperCase()} ${now.getFullYear()}`;
+            `${monthNames[
+                parseInt(currentViewMonth) - 1
+            ].toUpperCase()} ${now.getFullYear()}`;
     }
 }
+
+
+/* =========================================================
+   START
+========================================================= */
 
 renderNav();
 
 loadData();
 
-setInterval(updateClock, 1000);
+setInterval(
+    updateClock,
+    1000
+);
 
 updateClock();
 
-// Odświeżanie danych co 3 minuty
-setInterval(loadData, 180000);
+
+/*
+   Odświeżanie danych co 3 minuty.
+*/
+
+setInterval(
+    loadData,
+    180000
+);
